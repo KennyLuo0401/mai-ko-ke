@@ -1,5 +1,9 @@
 # Project Status / 專案狀態
 
+## 2026-09-06 — Public hackathon access / 黑客松公開體驗
+
+Published the user-supplied host passcode in README with explicit approval, updated bilingual hosting instructions, and recorded post-event removal plus deployed-key rotation in SUBMISSION.md. No deployment settings were changed; post-event cleanup is pending, not scheduled automatically. / 經使用者明確同意，在 README 公開展示通行碼並更新雙語開房說明；繳交文件記錄活動後移除及更換部署金鑰的待辦。本次未更動部署設定，後續清理尚未執行，也未排程自動執行。
+
 ## 2026-09-06 — S4-D Reviewer-facing README / 評審閱讀版文件
 
 Reordered README around the demo, participation requirements, nine-stage game flow, local setup, architecture and limitations; added Chinese explanations alongside English and moved development links to the end. Added the team-supplied YouTube link to README and SUBMISSION.md; video access, duration and audiovisual checks remain pending. The video is the visual entry point; no new screenshots were added. / README 改為展示入口、人數要求、九階段玩法、本機啟動、架構與限制的閱讀順序，補齊中英說明、將開發文件移到最後；加入使用者提供的 YouTube，影片權限、片長與影音檢查仍待確認。本次以影片作為視覺入口，未新增截圖。

@@ -46,6 +46,10 @@ Private contact details belong in the submission form, not the public repo. /
 - [ ] 保留送出成功畫面或確認信 / Save confirmation locally; redact private details before sharing.
 - [ ] 截止前預留至少 30 分鐘 / Confirm the actual deadline and leave time for link/permission fixes.
 
+## After the hackathon / 活動結束後
+
+- [ ] 移除 README 公開展示通行碼，並更換部署環境的 `MKK_HOST_KEY`；舊值仍留在 Git 歷史，僅刪文件不足以撤銷。 / Remove the intentionally public demo passcode and rotate the deployed host key; deletion alone does not revoke the value retained in Git history.
+
 Local validation on package import: 99 tests passed, 24 live-service tests
 skipped without credentials, and 6 desktop/mobile E2E tests passed. Do not
 describe the skipped live Supabase/OpenAI checks as newly verified. /

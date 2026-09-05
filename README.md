@@ -20,8 +20,13 @@ Online discussions often reward taking sides before explaining reasons. A host s
 
 ## 怎麼體驗 / Try it
 
-1. 主持人開啟[網站](https://mai-ko-ke.vercel.app)，選「我來開房」，分享六位數房號。若出現通行碼欄位，需向主辦者索取。<br>
-   The host opens a room and shares its six-digit code. If hosting is passcode-protected, ask the organizer for access.
+**黑客松展示用開房通行碼 / Public hackathon host passcode：`mkk-407e9731e2f4`**
+
+此通行碼經團隊同意公開，供評審與參與者體驗。玩家加入只需房號，不需此通行碼。活動結束後須移除此公開說明，並更換部署環境的 `MKK_HOST_KEY`；只刪除文件不會移除 Git 歷史中的舊值。<br>
+Published with the team's approval for hackathon reviewers and participants. Players only need the room code. After the event, remove this notice and rotate the deployed `MKK_HOST_KEY`; deleting the text alone does not remove the old value from Git history.
+
+1. 主持人開啟[網站](https://mai-ko-ke.vercel.app)，選「我來開房」，輸入上方展示通行碼，開房後分享六位數房號。<br>
+   The host opens the website, selects “Host a room,” enters the demo passcode above, and shares the resulting six-digit room code.
 2. 至少兩位玩家選「加入朋友」，輸入房號與暱稱。<br>
    At least two players join with the code and their nicknames.
 3. 主持人選「填入示範素材」，或貼上自己的素材，再按「產生中立導讀」。<br>
