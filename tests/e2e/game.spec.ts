@@ -1,5 +1,32 @@
 import { expect, test, type Page } from "@playwright/test";
 
+for (const gated of [false, true]) {
+  test(`entry tabs keep the surrounding layout still (host gate: ${gated})`, async ({ page }) => {
+    await page.route("**/api/config", (route) => route.fulfill({ json: { data: { hostKeyRequired: gated } } }));
+    await page.goto("/");
+    for (const en of [false, true]) {
+      if (en) await page.getByRole("button", { name: "EN", exact: true }).click();
+      const joinTab = page.getByRole("button", { name: en ? "Join friends" : "加入朋友", exact: true });
+      const hostTab = page.getByRole("button", { name: en ? "Host a room" : "我來開房", exact: true });
+      await hostTab.click();
+      if (gated) await expect(page.getByLabel(en ? "Host passcode" : "主持人通行碼")).toBeVisible();
+      await joinTab.click();
+      const measure = () => page.locator(".site-header, .home-intro, .entry-card, .entry-card h2, .entry-tabs, .site-footer").evaluateAll((elements) => elements.map((element) => {
+        const rect = element.getBoundingClientRect();
+        return { x: rect.x + window.scrollX, y: rect.y + window.scrollY, width: rect.width, height: rect.height };
+      }));
+      const before = await measure();
+      await hostTab.click();
+      expect(await measure()).toEqual(before);
+      await expect(page.getByRole("textbox", { name: en ? "Six-digit room code" : "六位數房號" })).toHaveCount(0);
+      await joinTab.click();
+      expect(await measure()).toEqual(before);
+      await expect(page.getByRole("button", { name: en ? "Open a room" : "開一間房", exact: true })).toHaveCount(0);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    }
+  });
+}
+
 /**
  * The critical end-to-end scenario from BUILD_PLAN §12, played through the real
  * UI: one host and two players in isolated contexts complete a whole round

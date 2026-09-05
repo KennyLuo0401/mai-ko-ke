@@ -130,19 +130,21 @@ export function Home({ initialHostKey = "" }: { initialHostKey?: string }) {
         <div className="entry-card-top"><span className="eyebrow">PULL UP A CHAIR</span></div>
         <h2>{en ? "There’s a seat for you." : "留了一個位子給你。"}</h2>
         <div className="entry-tabs"><button aria-pressed={tab === "join"} onClick={() => { setTab("join"); setError(null); }}>{en ? "Join friends" : "加入朋友"}</button><button aria-pressed={tab === "host"} onClick={() => { setTab("host"); setError(null); }}>{en ? "Host a room" : "我來開房"}</button></div>
-        {tab === "join" ? <form onSubmit={join} noValidate>
+        <div className="entry-panels">
+        <form className="entry-panel" data-active={tab === "join"} inert={tab !== "join"} onSubmit={join} noValidate>
           <label htmlFor="room-code">{en ? "Six-digit room code" : "六位數房號"}</label>
           <input className="code-input" id="room-code" value={code} onChange={(event) => { setCode(event.target.value.replace(/\D/g, "").slice(0, 6)); setError(null); }} inputMode="numeric" autoComplete="off" placeholder="000000" maxLength={6} aria-invalid={Boolean(error)} aria-describedby={error ? "join-error" : undefined} />
           <label htmlFor="nickname">{en ? "What should we call you?" : "怎麼稱呼你？"}</label>
           <input id="nickname" value={nickname} onChange={(event) => { setNickname(event.target.value); setError(null); }} placeholder={en ? "Your nickname" : "輸入你的暱稱"} maxLength={20} autoComplete="nickname" aria-invalid={Boolean(error)} aria-describedby={error ? "join-error" : undefined} />
           {error && <p id="join-error" className="error" role="alert">{error}</p>}
           <button className="button primary full" type="submit" disabled={busy}>{en ? "Take my seat" : "入座，開始想"}<Arrow /></button>
-        </form> : <div className="host-entry"><p>{en ? "Bring everyone together. As host, you guide the conversation and let each person think for themselves." : "把朋友揪到同一桌。你負責帶大家往前走，每個人負責保留自己的想法。"}</p><div className="host-checklist"><span>01　{en ? "Share the room code" : "分享房號，讓朋友入座"}</span><span>02　{en ? "Paste something worth discussing" : "貼一則值得討論的素材"}</span><span>03　{en ? "Reveal everyone’s views" : "等大家想好，一起翻牌"}</span></div>{hostGated && <>
+        </form><div className="host-entry entry-panel" data-active={tab === "host"} inert={tab !== "host"}><p>{en ? "Bring everyone together. As host, you guide the conversation and let each person think for themselves." : "把朋友揪到同一桌。你負責帶大家往前走，每個人負責保留自己的想法。"}</p><div className="host-checklist"><span>01　{en ? "Share the room code" : "分享房號，讓朋友入座"}</span><span>02　{en ? "Paste something worth discussing" : "貼一則值得討論的素材"}</span><span>03　{en ? "Reveal everyone’s views" : "等大家想好，一起翻牌"}</span></div>{hostGated && <>
           <label htmlFor="host-key">{en ? "Host passcode" : "主持人通行碼"}</label>
           <input id="host-key" type="password" value={hostKey} onChange={(event) => { setHostKey(event.target.value); setError(null); }} placeholder={en ? "Ask whoever set this up" : "向主辦者索取"} autoComplete="off" />
           <p className="preview-hint">{en ? "Only the organiser opens rooms. Everyone else joins with a room code." : "只有主辦者能開房，其他人用房號加入。"}</p>
         </>}
-        {error && <p className="error" role="alert">{error}</p>}<button className="button primary full" onClick={host} disabled={busy || (hostGated && !hostKey.trim())}>{en ? "Open a room" : "開一間房"}<Arrow /></button></div>}
+        {error && <p className="error" role="alert">{error}</p>}<button className="button primary full" onClick={host} disabled={busy || (hostGated && !hostKey.trim())}>{en ? "Open a room" : "開一間房"}<Arrow /></button></div>
+        </div>
       </section>
     </main>
     <Footer en={en} />

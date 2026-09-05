@@ -1,5 +1,15 @@
 # Project Status / 專案狀態
 
+## 2026-09-06 — S3-F Entry layout stability / 首頁分頁穩定
+
+Join and host panels share a content-sized grid area; the inactive panel remains in layout but is invisible and inert. Switching tabs keeps the card, heading, hero and footer stationary without a fixed pixel height. No backend changes. / 加入與開房面板共用依內容決定高度的網格，未選取面板保留空間但隱藏且不可操作；切換不再推動卡片、標題、標語與頁尾，不寫死像素高度，未修改後端。
+
+Verification: reproduced failures before the fix; all 10 desktop/mobile E2E tests pass, including Chinese/English and gated/ungated layout checks. `npm run verify` passes lint, typecheck, build and 99 tests; 24 live-service tests remain skipped because external credentials are absent. Existing Playwright color-environment warnings remain. Not pushed or deployed in this session. / 修前已重現失敗；修後桌機／手機共 10 項 E2E 通過，涵蓋中英文及有無通行碼；lint、型別、建置與 99 項測試通過，24 項外部服務測試因未配置憑證跳過。既有瀏覽器測試色彩環境提示仍存在，本次未推送或部署。
+
+**場景**：首頁切換加入／開房時，內容高度不同使周圍版面跳動。
+**教訓**：同一張入口卡片的分頁應共用足夠的自然高度，並驗證周圍元素位置不變。
+**適用**：本專案首頁分頁與響應式版面調整。
+
 ## 2026-09-06 — Submission documentation / 繳交文件
 
 Added MIT LICENSE, third-party package/model/data/asset disclosure, README demo link/problem summary/runtime setup, and SUBMISSION.md mapped to the organizer checklist. Team/track/sponsor/video/receipt items remain explicitly pending; no form was submitted or deployment performed. Public identity/path review remains a team check. / 補齊 MIT 授權、第三方揭露、README 展示網址／摘要／環境與繳交檢查文件；隊伍、賽道、贊助、影片與送出證明仍明列待完成，本次未填報表單或部署，公開身分與路徑資料仍待團隊確認。

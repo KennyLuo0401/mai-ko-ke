@@ -42,6 +42,9 @@ h1, h2, h3, p { margin-top: 0; }
 .seat-icon { font-size: 30px; color: var(--orange); }
 .entry-card h2 { font-size: 25px; letter-spacing: -.04em; margin-bottom: 28px; }
 .entry-tabs { display: flex; border-bottom: 1px solid var(--line); margin-bottom: 25px; }
+.entry-panels { display: grid; }
+.entry-panel { grid-area: 1 / 1; min-width: 0; }
+.entry-panel[data-active="false"] { visibility: hidden; }
 .entry-tabs button { flex: 1; border: 0; border-bottom: 3px solid transparent; margin-bottom: -1px; padding: 12px 8px; color: var(--muted); background: none; font-size: 14px; }
 .entry-tabs button[aria-pressed="true"] { border-bottom-color: var(--ink); color: var(--ink); font-weight: 700; }
 label { display: block; }
