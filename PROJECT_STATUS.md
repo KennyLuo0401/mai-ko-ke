@@ -1,5 +1,11 @@
 # Project Status / 專案狀態
 
+## 2026-09-06 — S4-D Reviewer-facing README / 評審閱讀版文件
+
+Reordered README around the demo, participation requirements, nine-stage game flow, local setup, architecture and limitations; added Chinese explanations alongside English and moved development links to the end. Added the team-supplied YouTube link to README and SUBMISSION.md; video access, duration and audiovisual checks remain pending. The video is the visual entry point; no new screenshots were added. / README 改為展示入口、人數要求、九階段玩法、本機啟動、架構與限制的閱讀順序，補齊中英說明、將開發文件移到最後；加入使用者提供的 YouTube，影片權限、片長與影音檢查仍待確認。本次以影片作為視覺入口，未新增截圖。
+
+Documentation-only changes. `npm run verify`: lint, typecheck and build passed; 99 tests passed, 24 live-service tests skipped without credentials. / 僅修改文件；lint、型別與建置通過，99 項測試通過、24 項外部服務測試因未配置憑證跳過。
+
 ## 2026-09-06 — S3-F Entry layout stability / 首頁分頁穩定
 
 Join and host panels share a content-sized grid area; the inactive panel remains in layout but is invisible and inert. Switching tabs keeps the card, heading, hero and footer stationary without a fixed pixel height. No backend changes. / 加入與開房面板共用依內容決定高度的網格，未選取面板保留空間但隱藏且不可操作；切換不再推動卡片、標題、標語與頁尾，不寫死像素高度，未修改後端。

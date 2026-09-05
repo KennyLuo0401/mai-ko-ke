@@ -10,7 +10,7 @@ Checked boxes mean evidence was available; this is not a submission receipt.
 - Demo / 展示: https://mai-ko-ke.vercel.app
 - Project / 專案: 《麥擱假》 Māi koh ké
 - 100–200 character Chinese summary / 中文摘要: README.md → 問題與摘要。
-- Video URL / 影片連結: **Not supplied / 尚未提供**。
+- Video URL / 影片連結: https://youtu.be/r44S7jpL2tc （使用者提供；觀看權限、片長與影音內容待確認 / Supplied by the team; access, duration and audiovisual quality not yet verified.）
 
 ## Team / 隊伍資料
 
@@ -35,7 +35,7 @@ Private contact details belong in the submission form, not the public repo. /
 
 - [x] 展示網址可直接開啟 / Fresh unauthenticated browser returned HTTP 200 on 2026-09-06. This verifies opening the site, not every live game/API path.
 - [x] README 提供安裝與執行方式 / Includes clone, environment, install and startup instructions.
-- [ ] 評選影片不超過 2:00 / Video not supplied; check duration.
+- [ ] 評選影片不超過 2:00 / Video URL supplied; check duration.
 - [ ] YouTube 影片設為「知道連結即可觀看」 / Set Unlisted and test without signing in.
 - [ ] 影片聲音、字幕與畫面正常 / Watch the final upload end to end.
 - [ ] 本機備援影片或截圖已準備 / Select and keep the final backup locally; earlier development screenshots are not marked as final submission assets.
