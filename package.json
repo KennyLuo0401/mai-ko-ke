@@ -4,15 +4,18 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --max-warnings 0",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "smoke": "BASE=${BASE:-http://localhost:3001} ./scripts/smoke.sh",
+    "verify": "npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.115.0",
     "next": "16.3.4",
     "react": "19.2.8",
     "react-dom": "19.2.8"

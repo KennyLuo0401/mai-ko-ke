@@ -1,8 +1,8 @@
 # 《麥擱假》Build Plan / 開發計畫
 
 - Project: 20260904 Taiwan Future Festival Hackathon
-- Updated / 更新日期: 2026-09-05
-- Status / 狀態: S1-F frontend fixture preview implemented; full S0/S1 and backend integration remain pending. Detailed API contracts are still proposals. / S1-F 前端固定資料預覽已實作；完整 S0／S1 與後端串接仍待完成，詳細 API 介面仍為草案。
+- Updated / 更新日期: 2026-09-06
+- Status / 狀態: Final frontend/backend package imported; local memory/fixture flow verified. Live Supabase and AI checks not rerun during import; see the latest PROJECT_STATUS.md entry. Older roadmap details below remain historical design context. / 已匯入最終前後端整合包，本機 memory／fixture 流程已驗證。本次未重跑真實 Supabase 與 AI 驗證，請以 PROJECT_STATUS.md 最新紀錄為準；以下原路線細節保留為歷史設計背景。
 - Product type / 產品形式: Co-located multiplayer web app / 同場多人 Web App
 
 ## 1. Product Objective / 產品目標

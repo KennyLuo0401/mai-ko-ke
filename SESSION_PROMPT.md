@@ -1,4 +1,10 @@
-# S1-F — Frontend fixture preview / 前端固定資料預覽
+# S2-IMPORT — Full-stack package import / 前後端整合包匯入
+
+Import the final Desktop/maike source package into this repository, exclude secrets and generated output, verify the local memory/fixture game, and push the current branch. Preserve the original package. / 將 Desktop/maike 最終程式匯入本 repo，排除機密與產物，驗證本機 memory／fixture 遊戲並推送當前分支，保留原包。
+
+Acceptance: lint/typecheck/build pass; local tests and desktop/mobile E2E pass; external-service skips are explicitly reported; staged files contain no local environment or deployment linkage; commit and remote match. No deployment or live database mutation is part of this import. / 驗收：lint／型別／build 通過，本機測試與桌機／手機 E2E 通過，明列外部服務跳過項目，暫存檔案不含本機環境與部署連結資料，提交與遠端一致。本次不部署、不修改線上資料庫。
+
+## Historical S1-F scope / 以下為舊 S1-F 範圍
 
 Owner: Kenny. Status: frontend slice verified; project S1 pending backend. / 負責人：Kenny；狀態：前端範圍已驗證，專案 S1 待後端。
 

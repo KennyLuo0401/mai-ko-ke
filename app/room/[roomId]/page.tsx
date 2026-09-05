@@ -1,10 +1,11 @@
-import { RoomPreview } from "@/components/game-preview";
+import { Room } from "@/components/game-room";
 
+/** Knowing the URL grants nothing — the server authorizes every RoomView read. */
 export default async function Page({ params, searchParams }: {
   params: Promise<{ roomId: string }>;
-  searchParams: Promise<{ lang?: string | string[]; name?: string | string[] }>;
+  searchParams: Promise<{ lang?: string | string[] }>;
 }) {
   const { roomId } = await params;
-  const { lang, name } = await searchParams;
-  return <RoomPreview role="player" roomId={roomId} initialLanguage={lang === "en" ? "en" : "zh-TW"} nickname={typeof name === "string" ? name.trim().slice(0, 20) || "Kenny" : "Kenny"} />;
+  const { lang } = await searchParams;
+  return <Room roomId={roomId} initialLanguage={lang === "en" ? "en" : "zh-TW"} />;
 }
