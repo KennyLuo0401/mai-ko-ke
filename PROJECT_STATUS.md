@@ -1,5 +1,13 @@
 # Project Status / 專案狀態
 
+## 2026-09-06 — README screenshots / README 實際畫面
+
+Added the user's original screenshots 1, 3, 5 and 6 under docs/screenshots and linked them from README with bilingual descriptions for briefing, perspective cards, discussion and the final summary. Original Desktop files are unchanged. Screenshot room codes are explicitly marked as historical examples. / 納入使用者原始第 1、3、5、6 張截圖，附上導讀、思考卡、討論與摘要的雙語說明；桌面原檔未變更，明示截圖房號不是固定示範房間。
+
+**場景**：評審版 README 已調整文字與影片入口，卻未補上先前提議的截圖。
+**教訓**：文件驗收須逐項核對已承諾的文字、影片與畫面素材；未交付的項目不可因已有另一種素材而略過。
+**適用**：本專案 README 與黑客松提交文件。
+
 ## 2026-09-06 — Public hackathon access / 黑客松公開體驗
 
 Published the user-supplied host passcode in README with explicit approval, updated bilingual hosting instructions, and recorded post-event removal plus deployed-key rotation in SUBMISSION.md. No deployment settings were changed; post-event cleanup is pending, not scheduled automatically. / 經使用者明確同意，在 README 公開展示通行碼並更新雙語開房說明；繳交文件記錄活動後移除及更換部署金鑰的待辦。本次未更動部署設定，後續清理尚未執行，也未排程自動執行。

@@ -18,6 +18,34 @@ An AI-facilitated discussion game: think independently, explore another angle, a
 
 Online discussions often reward taking sides before explaining reasons. A host shares a post; players answer privately, receive perspective cards, reveal their responses together, and discuss face to face. The final summary preserves agreement, disagreement, and missing information. The interface supports Chinese, English, and mobile devices.
 
+## 畫面預覽 / Screenshots
+
+以下為實際操作截圖；房號是當時的示例，體驗時請另開新房間。 / Screenshots from actual sessions; the displayed room codes are examples, not permanent demo rooms.
+
+### 中立導讀 / Neutral briefing
+
+先讀懂素材的主張與證據範圍，不急著判定真假。 / Understand the claims and evidence boundaries before taking a position.
+
+![中立導讀：整理夜市生意說法及缺少的證據 / Neutral briefing and evidence boundaries](./docs/screenshots/briefing.png)
+
+### 換個角度 / Perspective card
+
+每位玩家閱讀自己的思考卡，再選擇想法的變化與在意的理由。 / Players consider their perspective cards and explain how their thinking changes.
+
+![思考卡：從可檢查的證據出發，選擇想法與理由 / Evidence perspective card and response choices](./docs/screenshots/perspective-card.png)
+
+### 面對面討論 / In-person discussion
+
+翻牌後看見彼此的立場與理由，把焦點轉回現場對話。 / Reveal positions and reasons, then discuss face to face.
+
+![面對面討論：並列玩家想法與討論提示 / Player responses and discussion prompt](./docs/screenshots/discussion.png)
+
+### 這一桌的共識與分歧 / Agreement and disagreement
+
+留下討論摘要，保留尚未收斂的分歧與需要補充的資訊。 / Capture the discussion while preserving disagreement and missing information.
+
+![討論結果：共識、分歧與資訊缺口摘要 / Final discussion summary](./docs/screenshots/consensus.png)
+
 ## 怎麼體驗 / Try it
 
 **黑客松展示用開房通行碼 / Public hackathon host passcode：`mkk-407e9731e2f4`**
