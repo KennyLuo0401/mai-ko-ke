@@ -1,5 +1,9 @@
 # Project Status / 專案狀態
 
+## 2026-09-06 — Submission documentation / 繳交文件
+
+Added MIT LICENSE, third-party package/model/data/asset disclosure, README demo link/problem summary/runtime setup, and SUBMISSION.md mapped to the organizer checklist. Team/track/sponsor/video/receipt items remain explicitly pending; no form was submitted or deployment performed. Public identity/path review remains a team check. / 補齊 MIT 授權、第三方揭露、README 展示網址／摘要／環境與繳交檢查文件；隊伍、賽道、贊助、影片與送出證明仍明列待完成，本次未填報表單或部署，公開身分與路徑資料仍待團隊確認。
+
 ## 2026-09-06 — Final package import / 最終整合包匯入
 
 Imported source from `/Users/kenny/Desktop/maike` into this repo on `feat/frontend`, preserving the original folder. This entry supersedes older statements about the local checkout; prior deployment/test reports below are historical and were not revalidated against live services in this import. / 從桌面 maike 匯入前後端至本 repo 的 feat/frontend，保留原資料夾。本節優先於舊的本機狀態；下方既有部署與測試紀錄屬歷史，本次未對線上服務重新驗證。

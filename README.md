@@ -1,5 +1,18 @@
 # 《麥擱假》 Māi koh ké
 
+**[Live demo / 線上展示](https://mai-ko-ke.vercel.app)** ·
+**[MIT License](./LICENSE)** ·
+**[Third-party disclosure / 第三方揭露](./THIRD_PARTY_NOTICES.md)** ·
+**[Submission status / 繳交狀態](./SUBMISSION.md)**
+
+## Problem and summary / 問題與摘要
+
+網路討論容易讓人急著站隊，卻很少說清楚判斷背後的理由。《麥擱假》把一則有爭議的內容變成同場朋友的思辨遊戲：玩家先秘密表態，再收到不同角度的思考卡，完成後一起翻牌、面對面討論，最後確認一張保留共識、分歧與資訊缺口的地圖。AI 負責白話導讀與整理觀點，不判定真假或替玩家打分。支援中英文與手機操作，讓不熟悉議題的人也能參與。
+
+Online discussions often reward taking sides before explaining reasons. Mai Ko
+Ke gives each person space to decide independently, examine another angle and
+understand disagreement without asking AI to declare a winner.
+
 An AI-facilitated social thinking game for friends in the same room. A host
 drops in a doubtful post; the facilitator writes a neutral briefing and deals
 each player a **different** thinking card; everyone answers privately, reveals
@@ -15,7 +28,13 @@ disagreement**.
 
 ## Run it
 
+Use **Node.js 24.x and npm 11.x** (verified locally with Node 24.12.0 and npm
+11.6.2), Git, and a current browser. Clone the repo before installing. /
+請先準備以上執行環境、Git 與現代瀏覽器，再下載專案。
+
 ```bash
+git clone https://github.com/KennyLuo0401/mai-ko-ke.git
+cd mai-ko-ke
 npm ci
 cp .env.example .env.local     # works as-is; no credentials needed
 npm run dev                    # http://localhost:3001
@@ -42,6 +61,12 @@ so two tabs in one profile are the same player.
 Playwright needs its browser once: `npx playwright install chromium`.
 Next 16 allows only one dev server per project directory, so `test:e2e` reuses
 the one started by `npm run dev`.
+
+For an offline presentation backup after dependencies/browser installation,
+keep `MKK_STORE=memory` and `MKK_ANALYSIS_ADAPTER=fixture`: no Supabase/OpenAI
+credentials are needed. The fixed briefing is not a live analysis of arbitrary
+pasted text. Video/submission items still awaiting the team are listed in
+[SUBMISSION.md](./SUBMISSION.md). / 安裝依賴後可用 memory／fixture 作為本機展示備援；固定導讀不代表任意貼文的即時 AI 分析。影片與報名待辦另見繳交文件。
 
 ## How it is put together
 
