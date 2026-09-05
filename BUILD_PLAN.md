@@ -1,8 +1,8 @@
 # 《麥擱假》Build Plan / 開發計畫
 
 - Project: 20260904 Taiwan Future Festival Hackathon
-- Updated / 更新日期: 2026-09-05
-- Status / 狀態: Frontend/backend ownership confirmed; implementation not started; detailed contracts below are proposed for S0 review. / 前後端分工已確認，尚未開始實作；下方詳細介面為 S0 待確認草案。
+- Updated / 更新日期: 2026-09-06
+- Status / 狀態: Final frontend/backend package imported; local memory/fixture flow verified. Live Supabase and AI checks not rerun during import; see the latest PROJECT_STATUS.md entry. Older roadmap details below remain historical design context. / 已匯入最終前後端整合包，本機 memory／fixture 流程已驗證。本次未重跑真實 Supabase 與 AI 驗證，請以 PROJECT_STATUS.md 最新紀錄為準；以下原路線細節保留為歷史設計背景。
 - Product type / 產品形式: Co-located multiplayer web app / 同場多人 Web App
 
 ## 1. Product Objective / 產品目標
@@ -393,7 +393,7 @@ No Session is complete until all existing tests pass with zero failures and the 
 
 ## 15. Current Blockers and Open Decisions / 目前阻礙與待決
 
-- No application scaffold exists yet. / 尚未建立應用程式 scaffold。
+- The frontend task initialized the Next.js scaffold on feat/frontend; the backend owner should reuse its shared configuration. / 前端任務已在 feat/frontend 建立 Next.js 骨架；後端負責人請沿用共用設定。
 - Supabase project and credentials are not configured. / 尚未設定 Supabase 專案與金鑰。
 - OpenAI model and budget limits are not selected. / 尚未選擇 OpenAI 模型與預算上限。
 - Deployment provider is not selected. / 尚未選擇部署平台。
