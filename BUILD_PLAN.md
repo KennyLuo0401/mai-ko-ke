@@ -418,3 +418,171 @@ The first version is complete when Kenny and one friend can use two computers to
 - Supabase Row Level Security: https://supabase.com/docs/guides/database/postgres/row-level-security
 - Supabase Realtime with Next.js: https://supabase.com/docs/guides/realtime/realtime-with-nextjs
 - OpenAI Responses API: https://developers.openai.com/api/reference/cli/resources/responses/methods/create
+
+## 18. Parallel Delivery Plan / 前後端同步交付
+
+The following details are proposed implementation contracts. Confirm them together at S0 before coding against them. They do not imply that endpoints, types or commands already exist.
+
+以下為建議實作介面，須在 S0 共同確認後再據以開發，不代表端點、型別或指令已存在。
+
+| Checkpoint / 檢查點 | Kenny — frontend / 前端 | Collaborator — backend / 後端 | Integration acceptance / 串接驗收 |
+|---|---|---|---|
+| S0 | Check screen data and bilingual fixtures / 檢查畫面資料與雙語假資料 | Scaffold, contracts, fixture, environment / 骨架、介面、假資料、環境 | Both run the same commit / 兩人能執行同一 commit |
+| S1a | Create/join forms and lobby / 建房、加入與大廳 | Auth, create/join/read room APIs / 身分與建房、加入、讀取 API | Host and two players see the same roster / 主持人及兩位玩家看見相同名單 |
+| S1b | Briefing, initial answer, private card, waiting, reveal / 導讀、初答、私密卡、等待、翻牌 | Fixture analysis, private responses, state machine, safe updates / 固定分析、私密答案、狀態機、安全更新 | Private answers stay private; reveal happens once / 答案保密，翻牌一次 |
+| S2 | Loading/error/retry screens and real-content layout / 載入、錯誤、重試與真實內容排版 | Real AI analysis, bilingual output, validation/retry / 真實 AI 分析、雙語、驗證與重試 | Replace fixture adapter without changing UI contract / 替換固定資料 adapter，UI 介面不變 |
+| S3 | Final vote, statement review and map / 最終表態、共識審閱與地圖 | Final responses, AI candidates, approval rules / 最終答案、AI 候選與確認規則 | Entire game works with two players / 兩位玩家跑完完整遊戲 |
+| Release / 發布 | Mobile and bilingual demo checks / 手機與雙語展示檢查 | Deploy, configure, verify deletion / 部署、設定與刪除驗證 | Shareable URL and recorded rehearsal / 可分享網址與彩排紀錄 |
+
+Kenny starts each screen with the shared fixture while the collaborator builds its endpoint. Integrate at each checkpoint, not only after both branches are finished. Backend AI work may be tested independently during S1, but real AI must not enter the game until S1 passes.
+
+Kenny 先用共用固定資料做畫面，朋友同步開發對應端點。每個檢查點都串接，不等兩個分支全部寫完。S1 期間可以獨立測試 AI 模組，但 S1 通過前不得把真實 AI 接入遊戲。
+
+## 19. Screen and API Contract Draft / 畫面與 API 介面草案
+
+Suggested screen routes: `/` for create/join, `/host/[roomId]` for the host, and `/room/[roomId]` for players. Each room screen renders the backend-authorized phase; the URL itself grants no access.
+
+建議畫面路徑：`/` 建房／加入、`/host/[roomId]` 主持人、`/room/[roomId]` 玩家。房間畫面依後端授權的階段呈現，知道網址不代表具有權限。
+
+All endpoints below live under `/api`. Identity comes from the authenticated session, never a trusted player ID supplied by the client. B owns route implementations; A owns the client calls.
+
+以下端點皆位於 `/api`。身分取自驗證後的 session，不信任前端自行提供的玩家 ID。朋友實作 Route Handler，Kenny 負責前端呼叫。
+
+| Method and path / 方法與路徑 | Input / 輸入 | Result and authority / 結果與權限 |
+|---|---|---|
+| POST `/rooms` | `{language}` | Host creates room; returns `{roomId, roomCode}` / 主持人建房，回傳房間 ID 與房號 |
+| POST `/rooms/join` | `{roomCode, nickname, language}` | Returns `{roomId, playerId}`; reject late joins / 回傳房間與玩家 ID；拒絕遲加入 |
+| GET `/rooms/:id` | Session / 登入身分 | Role-filtered `RoomView` / 依角色過濾的房間畫面資料 |
+| POST `/rooms/:id/material` | `{sourceText, hostQuestion}` | Host only; analyze and return processing status / 僅主持人；分析並回傳處理狀態 |
+| POST `/rooms/:id/advance` | `{expectedState, action}` | Host only; validate allowed transition / 僅主持人；驗證允許的階段轉換 |
+| POST `/rooms/:id/responses` | Tagged answer payload below / 下方具階段標記的答案 | Save caller’s answer in the permitted phase / 只儲存呼叫者在允許階段的答案 |
+| POST `/rooms/:id/consensus-votes` | `{statementId, decision}` | One vote per player per current statement / 每位玩家對每個當前敘述一票 |
+
+Success envelope: `{data: ...}`. Error envelope: `{error: {code, message, retryable}}`. Frontend localization uses stable `code`; raw provider errors and secrets must not be returned. Proposed status mapping: 400 invalid input, 401 unauthenticated, 403 forbidden, 404 missing/inaccessible room, 409 phase conflict, 502 AI failure, 503 temporary unavailability.
+
+成功格式：`{data: ...}`；錯誤格式：`{error: {code, message, retryable}}`。前端以固定 `code` 顯示雙語訊息，不回傳服務商原始錯誤或機密。建議狀態碼：400 輸入錯誤、401 未驗證、403 無權限、404 房間不存在或不可存取、409 階段衝突、502 AI 失敗、503 暫時無法服務。
+
+`RoomView` must contain `roomId`, `roomCode`, `state`, monotonic `version`, caller `role`, public player roster, completion counts and caller-specific content. Before reveal, only the caller’s answers and assigned card may be included; host views do not include private answers either. Reveal data is absent until the server permits it. Final map data is available only when appropriate.
+
+`RoomView` 必須包含 `roomId`、`roomCode`、`state`、單調遞增的 `version`、呼叫者 `role`、公開玩家名單、完成數與個人內容。翻牌前只可包含呼叫者自己的答案與卡片，主持人也不能取得私密答案；伺服器允許後才提供翻牌資料。最終地圖只在適當階段提供。
+
+Subscribe only to safe room-state changes. On notification or reconnect, fetch the latest authorized `RoomView`. Subscribe before the initial fetch to avoid a fetch/subscribe gap; discard older versions. Never broadcast raw private responses. Reconnection must restore the current phase and saved answers.
+
+只訂閱安全的房間狀態更新，收到通知或重連時重新取得授權後的 `RoomView`。先訂閱再初次讀取，避免讀取與訂閱之間漏接更新；忽略舊版本。禁止廣播私密原始答案。重連後必須恢復當前階段與已儲存答案。
+
+## 20. Gameplay and Data Rules Draft / 遊戲與資料規則草案
+
+### 20.1 Question placement / 題目分配
+
+| Phase / 階段 | Payload / 資料 | Rule / 規則 |
+|---|---|---|
+| INITIAL_VOTE | `{stage: "initial", initialChoice}` | Single choice: yes/no/uncertain / 單選：是／不是／不確定 |
+| PRIVATE_CARD | `{stage: "card", reactionChoice, reasonIds}` | One reaction choice and one multiple-choice question; select 1–2 reasons / 一題反應單選與一題理由複選，選 1–2 個理由 |
+| FINAL_VOTE | `{stage: "final", changeChoice, finalChoice, comment?}` | One change choice; final yes/no/uncertain; one optional comment / 一題變化單選、最終是／不是／不確定、一個選填補充 |
+
+Reaction options: strengthens/weakens/unchanged/uncertain. Change options: more supportive/less supportive/unchanged/uncertain. Reasons include an information-insufficient option. Option IDs are stable across Chinese and English; translated display text is never used as an identifier. This placement yields exactly three single-choice questions, one multiple-choice question and one final yes/no/uncertain question.
+
+反應選項：更支持／更懷疑／沒有影響／不確定。變化選項：更支持／較不支持／未改變／不確定。理由包含資訊不足選項。中英文共用固定選項 ID，不以翻譯文字當識別碼。此配置恰為三題單選、一題複選、一題最終是／不是／不確定。
+
+### 20.2 Phase authority / 階段控制
+
+- Host submits material: LOBBY → MATERIAL_SUBMITTED. Successful analysis: → BRIEFING_READY. Failure stays in the material phase with a visible error and explicit retry. / 主持人提交素材後進入 MATERIAL_SUBMITTED，分析成功進入 BRIEFING_READY；失敗留在素材階段並顯示錯誤及明確重試操作。
+- Host starts voting: BRIEFING_READY → INITIAL_VOTE and locks the player roster. All initial answers saved: → PRIVATE_CARD。 / 主持人開始初答並鎖定玩家名單；全員初答儲存後進入 PRIVATE_CARD。
+- All card responses saved: → READY_TO_REVEAL → REVEALED, atomically guarded by the backend. Repeated requests must not reveal twice. / 全員卡片答案儲存後由後端保護轉換至 READY_TO_REVEAL 再翻牌；重複請求不得造成二次翻牌。
+- Host begins discussion, then final voting: REVEALED → IN_PERSON_DISCUSSION → FINAL_VOTE. / 主持人依序開始討論與最終表態。
+- All final responses saved: generate candidates while retaining FINAL_VOTE with a separate processing status; success → CONSENSUS_REVIEW. Failure exposes retry without discarding answers. / 全員最終答案儲存後產生候選，期間保留 FINAL_VOTE 並另記處理狀態；成功後進入 CONSENSUS_REVIEW，失敗顯示重試且保留答案。
+- All required statement votes saved: host may publish → COMPLETED. / 所有必要共識投票完成後，主持人可發布並進入 COMPLETED。
+
+Proposed MVP: one material and one round per room; host is a separate role, not automatically a voting player. Acceptance uses one host context plus two player contexts. Two computers can provide these three contexts with isolated browser profiles. Define player cap in S0, and generate enough distinct cards for the supported roster.
+
+MVP 建議每房一份素材、一輪遊戲；主持人為獨立角色，不自動兼任投票玩家。驗收使用一個主持人及兩個玩家瀏覽器環境，兩台電腦可用獨立瀏覽器設定檔建立三個環境。S0 決定玩家上限，並確保卡片數足夠分派不同角度。
+
+Do not equate network disconnection with withdrawal. Proposed MVP freezes the required roster at voting start and waits for disconnected players to return; if they cannot return, start a new room. Host removal, timeout-based exclusion and automatic skipping are outside this draft.
+
+斷線不等於退出。建議 MVP 在開始投票時固定必要玩家名單，斷線後等待重連；無法返回則另開新房。本草案不包含主持人踢人、逾時排除或自動跳過玩家。
+
+### 20.3 Consensus approval / 共識確認
+
+`decision` is `agree`, `needs_revision` or `disagree`. Only statements explicitly agreed to by every required player enter “We agree.” Missing votes block publication. A revision request or disagreement prevents that statement from being labeled unanimous. AI cannot set approval or compute authoritative votes.
+
+`decision` 為 `agree`、`needs_revision` 或 `disagree`。只有所有必要玩家明確同意的敘述才能進入「我們同意」。缺票不得發布；要求修改或反對都不能算全體共識。AI 不得設定通過與否，也不得計算權威票數。
+
+For the MVP, `needs_revision` records that the wording remains unresolved; it does not start an automatic rewrite loop. Show such statements separately alongside disagreement, missing evidence and uncertainty. Any future rewrite must invalidate earlier approval and require new votes on the new wording.
+
+MVP 的 `needs_revision` 記錄文字仍待修訂，不自動啟動重寫循環；在地圖中與分歧、缺少證據、不確定內容分區呈現。若未來加入改寫，必須使舊同意失效，對新文字重新投票。
+
+## 21. AI and Persistence Contract Draft / AI 與儲存介面草案
+
+Use `LocalizedText = {"zh-TW": string, "en": string}` for generated display text. Preserve the original material verbatim. UI translations belong to Kenny; generated content translations belong to the backend. Both languages must refer to the same claim, card, reason and statement IDs.
+
+生成文字使用 `LocalizedText = {"zh-TW": string, "en": string}`。原始素材原樣保留。介面翻譯由 Kenny 負責，生成內容翻譯由後端負責；兩種語言必須對應相同的主張、卡片、理由與共識 ID。
+
+| Contract / 介面 | Required fields / 必要欄位 |
+|---|---|
+| Analyze input / 分析輸入 | `sourceText`, `hostQuestion`, `cardCount`, `languages` |
+| GamePackage | `schemaVersion`, localized `briefing`, `claims[{id,text,evidenceBoundary}]`, `cards[{id,perspective,prompt}]`, `reasons[{id,label}]` |
+| Consensus input / 共識輸入 | Material context, claims, pseudonymous structured player answers / 素材背景、主張、假名化玩家結構答案 |
+| ConsensusPackage | `schemaVersion`, `statements[{id,text,category}]`; categories: candidate_agreement/disagreement/missing_evidence/uncertainty / 分類：候選共識、分歧、缺少證據、不確定 |
+
+All display-text fields above use LocalizedText. Backend code assigns cards, validates IDs and option counts, counts votes and decides final categories. Treat AI categories as proposals. Use strict versioned JSON Schemas and reject extra/invalid fields. The fixed GamePackage and ConsensusPackage must pass those same schemas.
+
+上表所有顯示文字使用 LocalizedText。後端程式分派卡片、驗證 ID 與選項數、統計票數並決定最終分類；AI 分類只是提案。使用嚴格且具版本的 JSON Schema，拒絕多餘或不合法欄位。固定 GamePackage 與 ConsensusPackage 必須通過相同 schema。
+
+Proposed database constraints: unique room code; unique player membership `(room_id, anonymous_user_id)`; one assignment per player per room; one response per player and stage; one consensus vote per player and statement. Preserve authorization through every server write even when using privileged credentials. Private response tables must not expose all rows merely because users share a room.
+
+建議資料庫約束：房號唯一；玩家成員關係 `(room_id, anonymous_user_id)` 唯一；每房每位玩家一份卡片分派；每位玩家每階段一份答案；每位玩家每則共識一票。即使用高權限金鑰，伺服器每次寫入仍須授權檢查。不能因為同房就允許讀取私密答案表的所有列。
+
+Retries mean at most three total attempts for transient external API failures, using exponential backoff. Malformed model output is a visible validation failure. Lock processing so duplicate submissions cannot launch duplicate AI jobs; use conditional state updates/transactions for concurrent final answers and phase changes. Freeze submitted answers for each phase; identical retries return the saved result, conflicting replacements return a conflict.
+
+外部 API 暫時性失敗以 exponential backoff 重試，最多共三次嘗試。模型格式錯誤須明確顯示驗證失敗。以處理鎖避免重複提交啟動多個 AI 工作；並行最後作答與階段轉換使用條件更新／交易保護。每階段送出後凍結答案，相同重試回傳已存結果，不同覆寫回傳衝突。
+
+## 22. Local Setup, Tests and Handoff / 本機設定、測試與交接
+
+### Setup / 設定
+
+B documents the supported Node/package-manager versions and pins one lockfile. Proposed scripts are `npm run dev`, `npm run build`, `npm run lint`, `npm run test`, `npm run test:rls` and `npm run test:e2e`; they must be implemented during scaffold setup before being treated as usable commands.
+
+朋友記錄支援的 Node 與套件管理器版本，只使用一份 lockfile。建議指令為 `npm run dev`、`npm run build`、`npm run lint`、`npm run test`、`npm run test:rls`、`npm run test:e2e`；須在建立骨架時實際設定，不能視為目前已可用。
+
+Environment template: public Supabase URL and publishable/anon key; server-only Supabase service-role key, OpenAI API key and selected model. Confirm exact variable names in S0. Provide placeholders only in `.env.example`; never send real secrets through Git or this handoff file. Kenny’s fixture-only frontend must work without server secrets. Use isolated local/test database data for automated tests, never production data.
+
+環境範本包含公開 Supabase URL 與 publishable/anon key；僅伺服器使用的 Supabase service-role key、OpenAI API key 與選定模型。S0 確認實際變數名稱。`.env.example` 只放占位值，不透過 Git 或本交接文件傳送真實機密。Kenny 的純固定資料前端不需要伺服器機密。自動化測試使用隔離本機／測試資料，不使用正式資料。
+
+### Required verification / 必要驗證
+
+- Backend: authorized and unauthorized access; private data absent from API and Realtime before reveal; cross-room access denied; duplicate answer/advance requests; simultaneous final submissions; late join rejection; reconnect recovery. / 後端：允許與拒絕存取、翻牌前 API 與同步事件無私密資料、阻擋跨房讀取、重複答案／推進請求、並行最後作答、拒絕遲加入、重連恢復。
+- AI: valid bilingual fixtures, strict output validation, three-attempt retry behavior, explicit errors, uncertainty option and preserved minority views. / AI：有效雙語固定資料、嚴格格式驗證、最多三次嘗試、明確錯誤、不確定選項及少數意見保留。
+- Frontend: all phases, loading/error/retry states, 1–2 reason selection, restored state, Chinese/English content and phone-width layouts. / 前端：所有階段、載入／錯誤／重試、理由選 1–2 項、狀態恢復、中英文內容與手機寬度排版。
+- End to end: host plus two isolated players, one using Chinese and one English; complete the scoped session without database intervention. The final release test covers the entire S1–S3 flow. / 端到端：主持人加兩位隔離玩家，一位中文一位英文；不手動改資料庫即可完成當次範圍，發布驗收須涵蓋完整 S1–S3。
+
+Run all implemented applicable checks at every session close, read their output, and record pass/fail counts. S0 verifies the scaffold; later sessions retain all existing checks and add their scoped coverage. No silent skipped tests. If blocked, record the exact command, error and remaining work instead of claiming completion.
+
+每個 Session 結束時執行所有已建立且適用的檢查，讀取輸出並記錄通過／失敗數。S0 驗證骨架，後續保留既有檢查並新增當次範圍覆蓋。不得靜默跳過測試；受阻時記錄完整指令、錯誤與未完成工作，不得宣稱完成。
+
+### Handoff message template / 交接訊息範本
+
+~~~text
+Session / 階段:
+Branch + commit / 分支與提交:
+Delivered behavior / 已交付行為:
+Changed files / 修改檔案:
+Contract changes / 介面變更: none or agreed change / 無或已確認變更
+Verification commands and results / 驗證指令與結果:
+Known limitations / 已知限制:
+Next action for teammate / 對方下一步:
+~~~
+
+Update SESSION_PROMPT.md at each session start and PROJECT_STATUS.md at each session end, including deployment URL when applicable. Keep approximately 20% of each session’s effort for integration/debugging. After three failed attempts in the same direction, stop and revise the approach.
+
+每次 Session 開始更新 SESSION_PROMPT.md，結束更新 PROJECT_STATUS.md；有部署時記錄網址。每個 Session 預留約 20% 工作量給整合與除錯。同方向連續失敗三次後停止並重新調整方案。
+
+### S0 decisions still required / S0 尚待共同決定
+
+1. Repository location/access, supported runtime, player cap and input/comment length limits. / Repo 位置與權限、執行環境、玩家上限、素材與補充長度限制。
+2. Accept or revise the API payloads, fixed-roster behavior, host role and consensus rules above. / 接受或修訂上述 API 格式、固定名單行為、主持人角色與共識規則。
+3. Supabase setup owner and secure credential delivery; model, cost cap and request timeout before S2. / Supabase 設定與機密交付負責人；S2 前決定模型、費用上限與請求逾時。
+4. Deployment provider and room-data deletion policy before release. / 發布前決定部署平台與房間資料刪除政策。
+
+Document delivery is complete when this bilingual plan is shareable. Product development is complete only after the release acceptance above passes. No application code or runtime verification is claimed by this document.
+
+本雙語計畫可分享代表文件交付，不代表產品完成。產品須通過上述發布驗收才算完成。本文件不宣稱應用程式已實作或已通過執行驗證。
